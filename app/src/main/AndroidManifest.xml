@@ -26,6 +26,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
+        android:name=".ShadowsocksApplication"
         android:allowBackup="true"
         android:banner="@drawable/ic_start_connected"
         android:hardwareAccelerated="true"
@@ -55,6 +56,7 @@
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
         </activity>
+
         <activity
             android:name="io.jerryc05.hello_ssr.ShadowsocksRunnerActivity"
             android:excludeFromRecents="true"
@@ -114,17 +116,20 @@
                 <data android:scheme="ssr" />
             </intent-filter>
         </activity>
+
         <activity
             android:name="io.jerryc05.hello_ssr.ScannerActivity"
             android:excludeFromRecents="true"
             android:label="@string/add_profile_methods_scan_qr_code"
             android:parentActivityName="io.jerryc05.hello_ssr.ProfileManagerActivity" />
+
         <activity
             android:name="io.jerryc05.hello_ssr.AppManager"
             android:excludeFromRecents="true"
             android:label="@string/proxied_apps"
             android:launchMode="singleTask"
             android:parentActivityName="io.jerryc05.hello_ssr.Shadowsocks" />
+
         <activity
             android:name="io.jerryc05.hello_ssr.TaskerActivity"
             android:icon="@mipmap/ic_launcher">
@@ -132,6 +137,7 @@
                 <action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING" />
             </intent-filter>
         </activity>
+
         <activity
             android:name="io.jerryc05.hello_ssr.ShadowsocksQuickSwitchActivity"
             android:excludeFromRecents="true"
@@ -145,6 +151,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <activity
             android:name="io.jerryc05.hello_ssr.QuickToggleShortcut"
             android:excludeFromRecents="true"

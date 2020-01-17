@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- global/misc category -->
-    <string name="app_name">ShadowsocksR</string>
-    <string name="quick_toggle">Toggle</string>
+    <string name="app_name">Hello SSR</string>
+
+    <string name="quick_toggle">Toggle SSR</string>
     <string name="misc_cat">Misc</string>
     <string name="stat">Network Traffic</string>
     <string name="stat_summary">Sent: \t\t\t\t\t%3$s\t↑\t%1$s/s\nReceived: \t%4$s\t↓\t%2$s/s</string>
@@ -67,7 +68,7 @@
     <string name="stopping">Shutting down…</string>
     <string name="vpn_error">%s</string>
     <string name="reboot_required">Failed to start VPN service. You might need to reboot your device.</string>
-    <string name="quick_switch">Switch</string>
+    <string name="quick_switch">Switch Line</string>
 
     <!-- alert category -->
     <string name="close">Close</string>

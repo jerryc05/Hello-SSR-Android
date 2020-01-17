@@ -24,8 +24,8 @@ class BootReceiver : BroadcastReceiver()
 	{
 		private val componentName by lazy { ComponentName(app, BootReceiver::class.java) }
 		var enabled: Boolean
-			get() = app.packageManager.getComponentEnabledSetting(BootReceiver.Companion.componentName) == PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-			set(value) = app.packageManager.setComponentEnabledSetting(BootReceiver.Companion.componentName, if (value) PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+			get() = app.packageManager.getComponentEnabledSetting(componentName) == PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+			set(value) = app.packageManager.setComponentEnabledSetting(componentName, if (value) PackageManager.COMPONENT_ENABLED_STATE_ENABLED
 			else PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
 	}
 }

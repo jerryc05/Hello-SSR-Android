@@ -2,7 +2,6 @@
   <code_scheme name="Project" version="173">
     <option name="SOFT_MARGINS" value="90,100" />
     <JetCodeStyleSettings>
-      <option name="LBRACE_ON_NEXT_LINE" value="true" />
       <option name="NAME_COUNT_TO_USE_STAR_IMPORT" value="1" />
       <option name="NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS" value="1" />
       <option name="CONTINUATION_INDENT_IN_PARAMETER_LISTS" value="false" />

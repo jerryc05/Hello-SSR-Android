@@ -12,36 +12,30 @@ import android.widget.*
 import androidx.appcompat.app.*
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.*
+import com.github.jorgecastilloprz.*
+import com.google.android.material.floatingactionbutton.*
+import com.google.android.material.snackbar.*
 import io.jerryc05.hello_ssr.aidl.*
 import io.jerryc05.hello_ssr.database.*
 import io.jerryc05.hello_ssr.job.*
 import io.jerryc05.hello_ssr.network.request.*
 import io.jerryc05.hello_ssr.utils.*
-import com.github.jorgecastilloprz.*
-import com.google.android.material.floatingactionbutton.*
-import com.google.android.material.snackbar.*
 import java.util.*
 
 //TODO:androidx
 @Suppress("DEPRECATION")
-class Shadowsocks : AppCompatActivity()
-{
-	companion object
-	{
-		private const val TAG = "Shadowsocks"
+class Shadowsocks : AppCompatActivity() {
+	companion object {
+		internal const val TAG = "Shadowsocks"
 		private const val REQUEST_CONNECT = 1
 	}
 
 	private val callback by lazy {
-		object : IShadowsocksServiceCallback.Stub()
-		{
-			override fun stateChanged(s: Int, profileName: String?, m: String?)
-			{
+		object : IShadowsocksServiceCallback.Stub() {
+			override fun stateChanged(s: Int, profileName: String?, m: String?) {
 				handler.post {
-					when (s)
-					{
-						Constants.State.CONNECTING ->
-						{
+					when (s) {
+						Constants.State.CONNECTING -> {
 							fab.backgroundTintList = greyTint
 							fab.setImageResource(R.drawable.ic_start_busy)
 							fab.isEnabled = false
@@ -49,15 +43,12 @@ class Shadowsocks : AppCompatActivity()
 							preferences.setEnabled(false)
 							stat.visibility = View.GONE
 						}
-						Constants.State.CONNECTED ->
-						{
+						Constants.State.CONNECTED -> {
 							fab.backgroundTintList = greenTint
-							if (state == Constants.State.CONNECTING)
-							{
+							if (state == Constants.State.CONNECTING) {
 								fabProgressCircle.beginFinalAnimation()
 							}
-							else
-							{
+							else {
 								fabProgressCircle.postDelayed({ hideCircle() }, 1000)
 							}
 							fab.isEnabled = true
@@ -67,14 +58,12 @@ class Shadowsocks : AppCompatActivity()
 							connectionTestText.visibility = View.VISIBLE
 							connectionTestText.text = getString(R.string.connection_test_pending)
 						}
-						Constants.State.STOPPED ->
-						{
+						Constants.State.STOPPED -> {
 							fab.backgroundTintList = greyTint
 							fabProgressCircle.postDelayed({ hideCircle() }, 1000)
 							fab.isEnabled = true
 							changeSwitch(false)
-							if (!m.isNullOrEmpty())
-							{
+							if (!m.isNullOrEmpty()) {
 								val snackBar = Snackbar.make(findViewById(android.R.id.content),
 															 String.format(Locale.ENGLISH, getString(R.string.vpn_error), m), Snackbar.LENGTH_LONG)
 								snackBar.show()
@@ -83,29 +72,25 @@ class Shadowsocks : AppCompatActivity()
 							preferences.setEnabled(true)
 							stat.visibility = View.GONE
 						}
-						Constants.State.STOPPING ->
-						{
+						Constants.State.STOPPING -> {
 							fab.backgroundTintList = greyTint
 							fab.setImageResource(R.drawable.ic_start_busy)
 							fab.isEnabled = false
-							if (state == Constants.State.CONNECTED)
-							{
+							if (state == Constants.State.CONNECTED) {
 								// ignore for stopped
 								fabProgressCircle.show()
 							}
 							preferences.setEnabled(false)
 							stat.visibility = View.GONE
 						}
-						else ->
-						{
+						else -> {
 						}
 					}
 					state = s
 				}
 			}
 
-			override fun trafficUpdated(txRate: Long, rxRate: Long, txTotal: Long, rxTotal: Long)
-			{
+			override fun trafficUpdated(txRate: Long, rxRate: Long, txTotal: Long, rxTotal: Long) {
 				handler.post { updateTraffic(txRate, rxRate, txTotal, rxTotal) }
 			}
 		}
@@ -113,51 +98,44 @@ class Shadowsocks : AppCompatActivity()
 
 	var handler = Handler()
 	private var serviceStarted: Boolean = false
-	private var state = Constants.State.STOPPED
-	private var isTestConnect: Boolean = false
+	internal var state = Constants.State.STOPPED
+	internal var isTestConnect: Boolean = false
 
-	private lateinit var fab: FloatingActionButton
-	private lateinit var fabProgressCircle: FABProgressCircle
+	internal lateinit var fab: FloatingActionButton
+	internal lateinit var fabProgressCircle: FABProgressCircle
 	private lateinit var mServiceBoundContext: ServiceBoundContext
-	private lateinit var stat: View
-	private lateinit var connectionTestText: TextView
+	internal lateinit var stat: View
+	internal lateinit var connectionTestText: TextView
 	private lateinit var txText: TextView
 	private lateinit var rxText: TextView
 	private lateinit var txRateText: TextView
 	private lateinit var rxRateText: TextView
-	private lateinit var preferences: ShadowsocksSettings
+	internal lateinit var preferences: ShadowsocksSettings
 
 	private var progressDialog: ProgressDialog? = null
-	private var greyTint: ColorStateList? = null
-	private var greenTint: ColorStateList? = null
+	internal var greyTint: ColorStateList? = null
+	internal var greenTint: ColorStateList? = null
 
-	override fun attachBaseContext(newBase: Context)
-	{
+	override fun attachBaseContext(newBase: Context) {
 		super.attachBaseContext(newBase)
 
-		mServiceBoundContext = object : ServiceBoundContext(newBase)
-		{
-			override fun onServiceConnected()
-			{
+		mServiceBoundContext = object : ServiceBoundContext(newBase) {
+			override fun onServiceConnected() {
 				// Update the UI
-				if (::fab.isInitialized)
-				{
+				if (::fab.isInitialized) {
 					fab.isEnabled = true
 				}
 
 				updateState()
 			}
 
-			override fun onServiceDisconnected()
-			{
-				if (::fab.isInitialized)
-				{
+			override fun onServiceDisconnected() {
+				if (::fab.isInitialized) {
 					fab.isEnabled = false
 				}
 			}
 
-			override fun binderDied()
-			{
+			override fun binderDied() {
 				detachService()
 				ShadowsocksApplication.app.crashRecovery()
 				attachService()
@@ -165,65 +143,54 @@ class Shadowsocks : AppCompatActivity()
 		}
 	}
 
-	fun updateTraffic(txRate: Long, rxRate: Long, txTotal: Long, rxTotal: Long)
-	{
+	fun updateTraffic(txRate: Long, rxRate: Long, txTotal: Long, rxTotal: Long) {
 		txText.text = TrafficMonitor.formatTraffic(txTotal)
 		rxText.text = TrafficMonitor.formatTraffic(rxTotal)
 		txRateText.text = "${TrafficMonitor.formatTraffic(txRate)}/s"
 		rxRateText.text = "${TrafficMonitor.formatTraffic(rxRate)}/s"
 	}
 
-	private fun attachService()
-	{
+	private fun attachService() {
 		mServiceBoundContext.attachService(callback)
 	}
 
-	private fun changeSwitch(checked: Boolean)
-	{
+	internal fun changeSwitch(checked: Boolean) {
 		serviceStarted = checked
-		val resId = if (checked) R.drawable.ic_start_connected else R.drawable.ic_start_idle
+		val resId = if (checked) R.drawable.ic_start_connected
+		else R.drawable.ic_start_idle
 		fab.setImageResource(resId)
-		if (fab.isEnabled)
-		{
+		if (fab.isEnabled) {
 			fab.isEnabled = false
 			handler.postDelayed({ fab.isEnabled = true }, 1000)
 		}
 	}
 
-	private fun Int.showProgress(): Handler
-	{
+	private fun Int.showProgress(): Handler {
 		clearDialog()
 		progressDialog = ProgressDialog.show(this@Shadowsocks, "", getString(this), true, false)
-		return object : Handler(Looper.getMainLooper())
-		{
-			override fun handleMessage(msg: Message)
-			{
+		return object : Handler(Looper.getMainLooper()) {
+			override fun handleMessage(msg: Message) {
 				clearDialog()
 			}
 		}
 	}
 
-	private fun cancelStart()
-	{
+	private fun cancelStart() {
 		clearDialog()
 		changeSwitch(false)
 	}
 
-	private fun prepareStartService()
-	{
+	private fun prepareStartService() {
 		val intent = VpnService.prepare(mServiceBoundContext)
-		if (intent != null)
-		{
+		if (intent != null) {
 			startActivityForResult(intent, REQUEST_CONNECT)
 		}
-		else
-		{
+		else {
 			handler.post { onActivityResult(REQUEST_CONNECT, Activity.RESULT_OK, null) }
 		}
 	}
 
-	override fun onCreate(savedInstanceState: Bundle?)
-	{
+	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.layout_main)
 		// Initialize Toolbar
@@ -244,8 +211,7 @@ class Shadowsocks : AppCompatActivity()
 		fab = findViewById(R.id.fab)
 		fabProgressCircle = findViewById(R.id.fabProgressCircle)
 		fab.setOnClickListener {
-			when
-			{
+			when {
 				serviceStarted -> serviceStop()
 				mServiceBoundContext.bgService != null -> prepareStartService()
 				else -> changeSwitch(false)
@@ -275,14 +241,12 @@ class Shadowsocks : AppCompatActivity()
 	/**
 	 * init toolbar
 	 */
-	private fun initToolbar()
-	{
+	private fun initToolbar() {
 		val toolbar = findViewById<Toolbar>(R.id.toolbar)
 		// non-translatable logo
 		toolbar.title = "shadowsocks R"
 		toolbar.setTitleTextAppearance(toolbar.context, R.style.Toolbar_Logo)
-		try
-		{
+		try {
 			val field = Toolbar::class.java.getDeclaredField("mTitleTextView")
 			field.isAccessible = true
 			val title = field.get(toolbar) as TextView
@@ -294,14 +258,12 @@ class Shadowsocks : AppCompatActivity()
 			title.setBackgroundResource(typedArray.getResourceId(0, 0))
 			typedArray.recycle()
 			val tf = Typefaces[this, "fonts/Iceland.ttf"]
-			if (tf != null)
-			{
+			if (tf != null) {
 				title.typeface = tf
 			}
 			title.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_arrow_drop_down, 0)
 		}
-		catch (e: Exception)
-		{
+		catch (e: Exception) {
 			e.printStackTrace()
 		}
 
@@ -310,11 +272,9 @@ class Shadowsocks : AppCompatActivity()
 	/**
 	 * test connect
 	 */
-	private fun testConnect()
-	{
+	private fun testConnect() {
 		// reject repeat invoke
-		if (isTestConnect)
-		{
+		if (isTestConnect) {
 			return
 		}
 
@@ -326,23 +286,19 @@ class Shadowsocks : AppCompatActivity()
 
 		// start test connect
 		val instance = RequestHelper.instance()
-		val requestCallback = object : RequestCallback()
-		{
+		val requestCallback = object : RequestCallback() {
 
-			override fun isRequestOk(code: Int): Boolean
-			{
+			override fun isRequestOk(code: Int): Boolean {
 				return code == 204 || code == 200
 			}
 
-			override fun onSuccess(code: Int, response: String)
-			{
+			override fun onSuccess(code: Int, response: String) {
 				val elapsed = System.currentTimeMillis() - start
 				val result = getString(R.string.connection_test_available, elapsed)
 				connectionTestText.text = result
 			}
 
-			override fun onFailed(code: Int, msg: String)
-			{
+			override fun onFailed(code: Int, msg: String) {
 				val exceptionMsg = getString(R.string.connection_test_error_status_code, code)
 				val result = getString(R.string.connection_test_error, exceptionMsg)
 				connectionTestText.setText(R.string.connection_test_fail)
@@ -350,8 +306,7 @@ class Shadowsocks : AppCompatActivity()
 					.show()
 			}
 
-			override fun onFinished()
-			{
+			override fun onFinished() {
 				isTestConnect = false
 			}
 		}
@@ -359,24 +314,17 @@ class Shadowsocks : AppCompatActivity()
 		instance!!["https://www.google.com/generate_204", requestCallback]
 	}
 
-	private fun hideCircle()
-	{
-		if (::fabProgressCircle.isInitialized)
-		{
+	internal fun hideCircle() {
+		if (::fabProgressCircle.isInitialized) {
 			fabProgressCircle.hide()
 		}
 	}
 
-	private fun updateState(resetConnectionTest: Boolean = true)
-	{
-		if (mServiceBoundContext.bgService != null)
-		{
-			try
-			{
-				when (mServiceBoundContext.bgService!!.state)
-				{
-					Constants.State.CONNECTING, Constants.State.STOPPING ->
-					{
+	internal fun updateState(resetConnectionTest: Boolean = true) {
+		if (mServiceBoundContext.bgService != null) {
+			try {
+				when (mServiceBoundContext.bgService!!.state) {
+					Constants.State.CONNECTING, Constants.State.STOPPING -> {
 						fab.backgroundTintList = greyTint
 						serviceStarted = false
 						fab.setImageResource(R.drawable.ic_start_busy)
@@ -384,22 +332,19 @@ class Shadowsocks : AppCompatActivity()
 						fabProgressCircle.show()
 						stat.visibility = View.GONE
 					}
-					Constants.State.CONNECTED ->
-					{
+					Constants.State.CONNECTED -> {
 						fab.backgroundTintList = greenTint
 						serviceStarted = true
 						fab.setImageResource(R.drawable.ic_start_connected)
 						preferences.setEnabled(false)
 						fabProgressCircle.postDelayed({ hideCircle() }, 100)
 						stat.visibility = View.VISIBLE
-						if (resetConnectionTest)
-						{
+						if (resetConnectionTest) {
 							connectionTestText.visibility = View.VISIBLE
 							connectionTestText.text = getString(R.string.connection_test_pending)
 						}
 					}
-					else ->
-					{
+					else -> {
 						fab.backgroundTintList = greyTint
 						serviceStarted = false
 						fab.setImageResource(R.drawable.ic_start_idle)
@@ -409,23 +354,19 @@ class Shadowsocks : AppCompatActivity()
 					}
 				}
 			}
-			catch (e: RemoteException)
-			{
+			catch (e: RemoteException) {
 				e.printStackTrace()
 			}
 
 		}
 	}
 
-	private fun updateCurrentProfile(): Boolean
-	{
+	private fun updateCurrentProfile(): Boolean {
 		// Check if current profile changed
-		if (!preferences.isCurrentProfileInitialized || ShadowsocksApplication.app.profileId() != preferences.currentProfile.id)
-		{
+		if (!preferences.isCurrentProfileInitialized || ShadowsocksApplication.app.profileId() != preferences.currentProfile.id) {
 			// updated
 			var profile = ShadowsocksApplication.app.currentProfile()
-			if (profile == null)
-			{
+			if (profile == null) {
 				// removed
 				val first = ShadowsocksApplication.app.profileManager.firstProfile
 				val id: Int
@@ -436,8 +377,7 @@ class Shadowsocks : AppCompatActivity()
 
 			updatePreferenceScreen(profile)
 
-			if (serviceStarted)
-			{
+			if (serviceStarted) {
 				serviceLoad()
 			}
 			return true
@@ -446,44 +386,37 @@ class Shadowsocks : AppCompatActivity()
 		return false
 	}
 
-	override fun onResume()
-	{
+	override fun onResume() {
 		super.onResume()
 		ShadowsocksApplication.app.refreshContainerHolder()
 		updateState(updateCurrentProfile())
 	}
 
-	private fun updatePreferenceScreen(profile: Profile)
-	{
+	private fun updatePreferenceScreen(profile: Profile) {
 		preferences.setProfile(profile)
 	}
 
-	override fun onStart()
-	{
+	override fun onStart() {
 		super.onStart()
 		mServiceBoundContext.registerCallback()
 	}
 
-	override fun onStop()
-	{
+	override fun onStop() {
 		super.onStop()
 
 		mServiceBoundContext.unregisterCallback()
 		clearDialog()
 	}
 
-	override fun onDestroy()
-	{
+	override fun onDestroy() {
 		super.onDestroy()
 		mServiceBoundContext.detachService()
 		BackupManager(this).dataChanged()
 		handler.removeCallbacksAndMessages(null)
 	}
 
-	fun recovery()
-	{
-		if (serviceStarted)
-		{
+	fun recovery() {
+		if (serviceStarted) {
 			serviceStop()
 		}
 		val h = R.string.recovering.showProgress()
@@ -493,20 +426,16 @@ class Shadowsocks : AppCompatActivity()
 
 	@SuppressLint("BatteryLife")
 	@TargetApi(Build.VERSION_CODES.M)
-	fun ignoreBatteryOptimization(): Boolean
-	{
+	fun ignoreBatteryOptimization(): Boolean {
 		var exception: Boolean
-		try
-		{
+		try {
 			val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
 			val packageName = packageName
 			var hasIgnored = true
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-			{
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 				hasIgnored = powerManager.isIgnoringBatteryOptimizations(packageName)
 			}
-			if (!hasIgnored)
-			{
+			if (!hasIgnored) {
 				val intent = Intent()
 				intent.action = android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
 				intent.data = Uri.parse("package:$packageName")
@@ -514,15 +443,12 @@ class Shadowsocks : AppCompatActivity()
 			}
 			exception = false
 		}
-		catch (e: Throwable)
-		{
+		catch (e: Throwable) {
 			exception = true
 		}
 
-		if (exception)
-		{
-			try
-			{
+		if (exception) {
+			try {
 				val intent = Intent(Intent.ACTION_MAIN)
 				intent.addCategory(Intent.CATEGORY_LAUNCHER)
 
@@ -535,8 +461,7 @@ class Shadowsocks : AppCompatActivity()
 				startActivity(intent)
 				exception = false
 			}
-			catch (e: Throwable)
-			{
+			catch (e: Throwable) {
 				exception = true
 			}
 
@@ -544,30 +469,23 @@ class Shadowsocks : AppCompatActivity()
 		return exception
 	}
 
-	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
-	{
+	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
-		if (resultCode == Activity.RESULT_OK)
-		{
+		if (resultCode == Activity.RESULT_OK) {
 			serviceLoad()
 		}
-		else
-		{
+		else {
 			cancelStart()
 			VayLog.e(TAG, "Failed to start VpnService")
 		}
 	}
 
-	private fun serviceStop()
-	{
-		if (mServiceBoundContext.bgService != null)
-		{
-			try
-			{
+	private fun serviceStop() {
+		if (mServiceBoundContext.bgService != null) {
+			try {
 				mServiceBoundContext.bgService!!.use(-1)
 			}
-			catch (e: RemoteException)
-			{
+			catch (e: RemoteException) {
 				e.printStackTrace()
 			}
 
@@ -577,26 +495,20 @@ class Shadowsocks : AppCompatActivity()
 	/**
 	 * Called when connect button is clicked.
 	 */
-	private fun serviceLoad()
-	{
-		try
-		{
+	private fun serviceLoad() {
+		try {
 			mServiceBoundContext.bgService!!.use(ShadowsocksApplication.app.profileId())
 		}
-		catch (e: RemoteException)
-		{
+		catch (e: RemoteException) {
 			e.printStackTrace()
 		}
 
 		changeSwitch(false)
 	}
 
-	private fun clearDialog()
-	{
-		if (progressDialog != null && progressDialog!!.isShowing)
-		{
-			if (!isDestroyed)
-			{
+	internal fun clearDialog() {
+		if (progressDialog != null && progressDialog!!.isShowing) {
+			if (!isDestroyed) {
 				progressDialog!!.dismiss()
 			}
 			progressDialog = null

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name">ShadowsocksR</string>
-    <string name="quick_toggle">开关</string>
+    <string name="quick_toggle">开关 SSR</string>
 
     <string name="misc_cat">其他</string>
     <string name="proxy_cat">服务器设置</string>
@@ -33,7 +32,7 @@
     <string name="invalid_server">服务器名无效</string>
     <string name="method_unsafe">警告：当前使用的加密算法不安全</string>
     <string name="stop">停止</string>
-    <string name="quick_switch">切换</string>
+    <string name="quick_switch">切换线路</string>
     <string name="stopping">正在关闭…</string>
     <string name="vpn_error">后台服务启动失败：%s</string>
     <string name="reboot_required">VPN 服务启动失败。你可能需要重启设备。</string>

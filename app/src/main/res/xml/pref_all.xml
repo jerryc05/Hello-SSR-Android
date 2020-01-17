@@ -135,8 +135,5 @@
         <Preference
             android:key="logcat"
             android:title="Logcat" />
-
     </PreferenceCategory>
-
-
 </PreferenceScreen>

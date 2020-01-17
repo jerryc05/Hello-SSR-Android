@@ -11,7 +11,7 @@ android {
         versionCode 1
         versionName '0.1.0'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        resConfigs 'xxhdpi', 'en', 'zh-rCN'
+        resConfigs 'xxhdpi', 'en', 'zh'
 //        dexOptions {
             // 让它不要对Lib做preDexing
 //            preDexLibraries = false
@@ -35,6 +35,13 @@ android {
             applicationIdSuffix '.dbg'
             debuggable true
             versionNameSuffix '.dbg'
+        }
+    }
+    splits {
+        abi {
+            enable true
+            reset()
+            include "arm64-v8a", "x86_64"
         }
     }
     sourceSets {

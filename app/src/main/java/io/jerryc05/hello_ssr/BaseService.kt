@@ -154,9 +154,9 @@ abstract class BaseService : Service()
 		if (profile == null) return
 		if (Constants.DefaultHostName == profile!!.host)
 		{
-			val holder = ShadowsocksApplication.Companion.app.containerHolder
-			val container = holder.container
-			val url = container.getString("proxy_url")
+//			val holder = ShadowsocksApplication.Companion.app.containerHolder
+//			val container = holder.container
+//			val url = container.getString("proxy_url")
 			val sig = Utils.getSignature(this)
 
 			val client = OkHttpClient.Builder()
@@ -184,31 +184,31 @@ abstract class BaseService : Service()
 				.add("sig", sig ?: "")
 				.build()
 
-			val request = Request.Builder()
-				.url(url)
-				.post(requestBody)
-				.build()
+//			val request = Request.Builder()
+//				.url(url)
+//				.post(requestBody)
+//				.build()
 
-			try
-			{
-				val response = client.newCall(request)
-					.execute()
-				val list = response.body!!.string()
-
-				val proxies = list.split("|")
-				proxies.shuffled()
-				val proxy = proxies[0].split(":")
-				profile!!.host = proxy[0].trim()
-				profile!!.remotePort = Integer.parseInt(proxy[1].trim())
-				profile!!.password = proxy[2].trim()
-				profile!!.method = proxy[3].trim()
-			}
-			catch (e: Exception)
-			{
-				VayLog.e(BaseService.Companion.TAG, "connect", e)
-				ShadowsocksApplication.Companion.app.track(e)
-				stopRunner(true, e.message)
-			}
+//			try
+//			{
+//				val response = client.newCall(request)
+//					.execute()
+//				val list = response.body!!.string()
+//
+//				val proxies = list.split("|")
+//				proxies.shuffled()
+//				val proxy = proxies[0].split(":")
+//				profile!!.host = proxy[0].trim()
+//				profile!!.remotePort = Integer.parseInt(proxy[1].trim())
+//				profile!!.password = proxy[2].trim()
+//				profile!!.method = proxy[3].trim()
+//			}
+//			catch (e: Exception)
+//			{
+//				VayLog.e(BaseService.Companion.TAG, "connect", e)
+//				ShadowsocksApplication.Companion.app.track(e)
+//				stopRunner(true, e.message)
+//			}
 		}
 	}
 

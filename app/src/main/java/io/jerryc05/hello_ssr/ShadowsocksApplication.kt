@@ -11,9 +11,9 @@ import io.jerryc05.hello_ssr.database.*
 import io.jerryc05.hello_ssr.job.*
 import io.jerryc05.hello_ssr.utils.*
 import com.evernote.android.job.*
-import com.google.android.gms.analytics.*
-import com.google.android.gms.common.api.*
-import com.google.android.gms.tagmanager.*
+//import com.google.android.gms.analytics.*
+//import com.google.android.gms.common.api.*
+//import com.google.android.gms.tagmanager.*
 import com.j256.ormlite.logger.*
 import java.io.*
 import java.util.*
@@ -46,18 +46,18 @@ class ShadowsocksApplication : Application()
 		}
 	}
 
-	lateinit var containerHolder: ContainerHolder
+//	lateinit var containerHolder: ContainerHolder
 	lateinit var settings: SharedPreferences
 	lateinit var editor: SharedPreferences.Editor
 	lateinit var profileManager: ProfileManager
 	lateinit var ssrSubManager: SSRSubManager
 	lateinit var mThreadPool: ScheduledExecutorService
-	private lateinit var tracker: Tracker
+//	private lateinit var tracker: Tracker
 
 	private fun initVariable()
 	{
-		tracker = GoogleAnalytics.getInstance(this)
-			.newTracker(R.xml.tracker)
+//		tracker = GoogleAnalytics.getInstance(this)
+//			.newTracker(R.xml.tracker)
 		settings = PreferenceManager.getDefaultSharedPreferences(this)
 		editor = settings.edit()
 
@@ -73,21 +73,21 @@ class ShadowsocksApplication : Application()
 
 	fun track(category: String, action: String)
 	{
-		val builders = HitBuilders.EventBuilder()
-			.setAction(action)
-			.setCategory(category)
-			.setLabel(BuildConfig.VERSION_NAME)
-			.build()
-		tracker.send(builders)
+//		val builders = HitBuilders.EventBuilder()
+//			.setAction(action)
+//			.setCategory(category)
+//			.setLabel(BuildConfig.VERSION_NAME)
+//			.build()
+//		tracker.send(builders)
 	}
 
 	fun track(t: Throwable)
 	{
-		val builders = HitBuilders.ExceptionBuilder()
-			.setDescription(StandardExceptionParser(this, null).getDescription(Thread.currentThread().name, t))
-			.setFatal(false)
-			.build()
-		tracker.send(builders)
+//		val builders = HitBuilders.ExceptionBuilder()
+//			.setDescription(StandardExceptionParser(this, null).getDescription(Thread.currentThread().name, t))
+//			.setFatal(false)
+//			.build()
+//		tracker.send(builders)
 	}
 
 	fun profileId(): Int
@@ -208,37 +208,37 @@ class ShadowsocksApplication : Application()
 		}
 		AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
 		checkChineseLocale(resources.configuration)
-		val tm = TagManager.getInstance(this)
-		val pending = tm.loadContainerPreferNonDefault("GTM-NT8WS8", R.raw.gtm_default_container)
-		val callback = ResultCallback<ContainerHolder> { holder ->
-			if (!holder.status.isSuccess)
-			{
-				return@ResultCallback
-			}
-			containerHolder = holder
-			val container = holder.container
-			container.registerFunctionCallMacroCallback(SIG_FUNC) { functionName, _ ->
-				if (SIG_FUNC == functionName)
-				{
-					Utils.getSignature(applicationContext)
-				}
-				else
-				{
-					null
-				}
-			}
-		}
-		pending.setResultCallback(callback, 2, TimeUnit.SECONDS)
+//		val tm = TagManager.getInstance(this)
+//		val pending = tm.loadContainerPreferNonDefault("GTM-NT8WS8", R.raw.gtm_default_container)
+//		val callback = ResultCallback<ContainerHolder> { holder ->
+//			if (!holder.status.isSuccess)
+//			{
+//				return@ResultCallback
+//			}
+//			containerHolder = holder
+//			val container = holder.container
+//			container.registerFunctionCallMacroCallback(SIG_FUNC) { functionName, _ ->
+//				if (SIG_FUNC == functionName)
+//				{
+//					Utils.getSignature(applicationContext)
+//				}
+//				else
+//				{
+//					null
+//				}
+//			}
+//		}
+//		pending.setResultCallback(callback, 2, TimeUnit.SECONDS)
 		JobManager.create(this)
 			.addJobCreator(DonaldTrump())
 	}
 
 	fun refreshContainerHolder()
 	{
-		if (::containerHolder.isInitialized)
-		{
-			containerHolder.refresh()
-		}
+//		if (::containerHolder.isInitialized)
+//		{
+//			containerHolder.refresh()
+//		}
 	}
 
 	private fun copyAssets(path: String)

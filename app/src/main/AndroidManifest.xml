@@ -4,8 +4,28 @@
     package="io.jerryc05.hello_ssr"
     android:installLocation="auto">
 
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.nfc"
+        android:required="false" />
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <application
-        android:name="io.jerryc05.hello_ssr.ShadowsocksApplication"
         android:allowBackup="true"
         android:banner="@drawable/ic_start_connected"
         android:hardwareAccelerated="true"
@@ -137,10 +157,6 @@
             </intent-filter>
         </activity>
 
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
-
         <receiver
             android:name="io.jerryc05.hello_ssr.BootReceiver"
             android:directBootAware="true"
@@ -150,6 +166,7 @@
                 <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
         <receiver
             android:name="io.jerryc05.hello_ssr.TaskerReceiver"
             tools:ignore="ExportedReceiver">
@@ -157,6 +174,7 @@
                 <action android:name="com.twofortyfouram.locale.intent.action.FIRE_SETTING" />
             </intent-filter>
         </receiver>
+
         <receiver
             android:name="com.evernote.android.job.v14.PlatformAlarmReceiver"
             android:process=":bg" />
@@ -168,6 +186,7 @@
         <service
             android:name="io.jerryc05.hello_ssr.ShadowsocksRunnerService"
             android:exported="false" />
+
         <service
             android:name="io.jerryc05.hello_ssr.ShadowsocksVpnService"
             android:exported="false"
@@ -178,6 +197,7 @@
                 <action android:name="android.net.VpnService" />
             </intent-filter>
         </service>
+
         <service
             android:name="io.jerryc05.hello_ssr.ShadowsocksTileService"
             android:icon="@drawable/ic_start_connected"
@@ -188,6 +208,7 @@
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
         </service>
+
         <service
             android:name="com.evernote.android.job.v21.PlatformJobService"
             android:process=":bg" />
@@ -195,34 +216,11 @@
         <service
             android:name="com.evernote.android.job.v14.PlatformAlarmService"
             android:process=":bg" />
+
         <service
             android:name="com.evernote.android.job.gcm.PlatformGcmService"
             android:enabled="true"
             android:process=":bg"
             tools:replace="android:enabled" />
     </application>
-
-    <uses-feature
-        android:name="android.hardware.touchscreen"
-        android:required="false" />
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="false" />
-    <uses-feature
-        android:name="android.hardware.nfc"
-        android:required="false" />
-    <uses-feature
-        android:name="android.software.leanback"
-        android:required="false" />
-
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.NFC" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
-
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
 </manifest>
